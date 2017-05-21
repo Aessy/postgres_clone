@@ -22,6 +22,7 @@ namespace tao
     {
     private:
       std::string connection_info_;
+      std::unordered_map<std::string, std::string> prepared_statements;
 
       std::unique_ptr< postgres::connection > v_create() const override;
       bool v_is_valid( postgres::connection& c ) const override;
@@ -39,6 +40,11 @@ namespace tao
 
     public:
       connection_pool( const private_key&, const std::string& connection_info );
+
+      void prepare(std::string const& key, std::string const& statement)
+      {
+          prepared_statements[key] = statement;
+      }
 
       std::shared_ptr< postgres::connection > connection()
       {

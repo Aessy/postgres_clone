@@ -15,7 +15,12 @@ namespace tao
 
     std::unique_ptr< connection > connection_pool::v_create() const
     {
-      return utility::make_unique< postgres::connection >( connection::private_key(), connection_info_ );
+      auto con = utility::make_unique< postgres::connection >( connection::private_key(), connection_info_ );
+      for (auto const& prepared_statement : prepared_statements)
+      {
+          con->prepare(prepared_statement.first, prepared_statement.second);
+      }
+      return con;
     }
 
     bool connection_pool::v_is_valid( postgres::connection& c ) const
